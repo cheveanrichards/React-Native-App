@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Text, View, ScrollView, FlatList } from "react-native";
-import { Card } from "react-native-elements";
+import { Card, Icon } from "react-native-elements";
 import { CAMPSITES } from "../shared/campsites";
 import { COMMENTS } from "../shared/comments";
 
-function RenderCampsite({ campsite }) {
+function RenderCampsite(props) {
+  const { campsite } = props;
   if (campsite) {
     return (
       <Card
@@ -12,6 +13,18 @@ function RenderCampsite({ campsite }) {
         image={require("./images/react-lake.jpg")}
       >
         <Text style={{ margin: 10 }}>{campsite.description}</Text>
+        <Icon
+          name={props.favorite ? "heart" : "heart-o"}
+          type="font-awesome"
+          color="#FF5733"
+          onPress={() =>
+            props.favorite
+              ? console.log("Already a favorite")
+              : props.markFavorite()
+          }
+          raised
+          reverse
+        />
       </Card>
     );
   }
@@ -51,7 +64,12 @@ class CampsiteInfo extends Component {
     this.state = {
       campsites: CAMPSITES,
       comments: COMMENTS,
+      favorite: false,
     };
+  }
+
+  markFavorite() {
+    this.setState({ favorite: true });
   }
 
   static navigationOptions = {
@@ -68,7 +86,11 @@ class CampsiteInfo extends Component {
     );
     return (
       <ScrollView>
-        <RenderCampsite campsite={campsite} />
+        <RenderCampsite
+          campsite={campsite}
+          markFavorite={() => this.markFavorite()}
+          favorite={this.state.favorite}
+        />
         <RenderComments comments={comments} />
       </ScrollView>
     );
